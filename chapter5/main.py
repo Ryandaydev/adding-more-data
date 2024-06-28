@@ -1,4 +1,4 @@
-"""FastAPI program - Chapter 6"""
+"""FastAPI program - Chapter 5"""
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlalchemy.orm import Session
