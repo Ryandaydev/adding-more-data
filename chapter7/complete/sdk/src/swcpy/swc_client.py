@@ -1,5 +1,5 @@
 import httpx
-import pyswc.swc_config as config
+import swcpy.swc_config as config
 import logging
 from urllib.parse import urlencode
 from .schemas import League, Team, Player, Performance
