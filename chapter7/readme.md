@@ -1,1 +1,1 @@
-# Chapter 7 - Creating Your SDK
+# Chapter 6 - Deploying Your API to the Cloud
