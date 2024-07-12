@@ -38,7 +38,7 @@ class SWCClient:
         """Class constructor that sets varibles from configuration object."""
 
         self.logger = logging.getLogger(__name__)
-        self.logger.debug("Input config: " + str(input_config))
+        self.logger.debug(f"Input config: {input_config}")
 
         self.swc_base_url = input_config.swc_base_url
         self.backoff = input_config.swc_backoff
