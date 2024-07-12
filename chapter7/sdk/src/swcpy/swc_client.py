@@ -29,10 +29,12 @@ class SWCClient:
     LIST_TEAMS_ENDPOINT = "/v0/teams/"
     GET_COUNTS_ENDPOINT = "/v0/counts/"
 
-    BULK_FILE_BASE_URL = (
-        "https://raw.githubusercontent.com/[github ID]"
-        + "/portfolio-project/main/bulk/"
-    )
+    # BULK_FILE_BASE_URL = (
+    #     "https://raw.githubusercontent.com/[github ID]"
+    #     + "/portfolio-project/main/bulk/"
+    # )
+
+    BULK_FILE_BASE_URL = ("https://github.com/Ryandaydev/adding-more-data/raw/main/bulk/")
 
     def __init__(self, input_config: config.SWCConfig):
         """Class constructor that sets varibles from configuration object."""
@@ -69,6 +71,8 @@ class SWCClient:
             self.BULK_FILE_NAMES = {
                 key: value + ".csv" for key, value in self.BULK_FILE_NAMES.items()
             }
+
+        self.logger.debug(f"Bulk file dictionary: {self.BULK_FILE_NAMES}")
 
     def get_url(self, 
             api_endpoint: str,
@@ -281,7 +285,7 @@ class SWCClient:
 
         player_file_path = self.BULK_FILE_BASE_URL + self.BULK_FILE_NAMES["players"]
 
-        response = httpx.get(player_file_path)
+        response = httpx.get(player_file_path, follow_redirects=True)
 
         if response.status_code == 200:
             self.logger.debug("File downloaded successfully")
@@ -294,7 +298,7 @@ class SWCClient:
 
         league_file_path = self.BULK_FILE_BASE_URL + self.BULK_FILE_NAMES["leagues"]
 
-        response = httpx.get(league_file_path)
+        response = httpx.get(league_file_path, follow_redirects=True)
 
         if response.status_code == 200:
             self.logger.debug("File downloaded successfully")
@@ -309,7 +313,7 @@ class SWCClient:
             self.BULK_FILE_BASE_URL + self.BULK_FILE_NAMES["performances"]
         )
 
-        response = httpx.get(performance_file_path)
+        response = httpx.get(performance_file_path, follow_redirects=True)
 
         if response.status_code == 200:
             self.logger.debug("File downloaded successfully")
@@ -322,7 +326,7 @@ class SWCClient:
 
         team_file_path = self.BULK_FILE_BASE_URL + self.BULK_FILE_NAMES["teams"]
 
-        response = httpx.get(team_file_path)
+        response = httpx.get(team_file_path, follow_redirects=True)
 
         if response.status_code == 200:
             self.logger.debug("File downloaded successfully")
@@ -337,7 +341,7 @@ class SWCClient:
             self.BULK_FILE_BASE_URL + self.BULK_FILE_NAMES["team_players"]
         )
 
-        response = httpx.get(team_player_file_path)
+        response = httpx.get(team_player_file_path, follow_redirects=True)
 
         if response.status_code == 200:
             self.logger.debug("File downloaded successfully")
