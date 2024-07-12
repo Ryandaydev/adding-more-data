@@ -70,20 +70,12 @@ class SWCClient:
                 key: value + ".csv" for key, value in self.BULK_FILE_NAMES.items()
             }
 
-    def get_url(self, 
-            api_endpoint: str,
-            api_params: dict = None
-        ) -> httpx.Response:
+    def get_url(self, url: str) -> httpx.Response:
         """Makes API call and logs errors."""
-
-        if api_params:
-            api_params = {key: val for key, val in api_params.items() if val is not None}
-
         try:
             with httpx.Client(base_url=self.swc_base_url) as client:
-                self.logger.debug(f"base_url: {self.swc_base_url}, api_endpoint: {api_endpoint}, api_params: {api_params}")
-                response = client.get(api_endpoint, params=api_params)
-                self.logger.debug(f"Response JSON: {response.json()}")
+                response = client.get(url)
+                self.logger.debug(response.json())
                 return response
         except httpx.HTTPStatusError as e:
             self.logger.error(
@@ -93,6 +85,18 @@ class SWCClient:
         except httpx.RequestError as e:
             self.logger.error(f"Request error occurred: {str(e)}")
             raise
+
+    def build_url(self, endpoint, params=None) -> str:
+        """Converts dictionary of parameters to query string and appends to URL"""
+        if params:
+            params_dict = {
+                key: value for (key, value) in params.items() if value is not None
+            }
+            query_string = urlencode(params_dict)
+            full_url = endpoint + "?" + query_string
+        else:
+            full_url = endpoint
+        return full_url
 
     def get_health_check(self) -> httpx.Response:
         """Checks if API is running and healthy.
@@ -136,9 +140,9 @@ class SWCClient:
             "league_name": league_name,
         }
 
-#        params = {key: val for key, val in params.items() if val is not None}
+        endpoint_url = self.build_url(self.LIST_LEAGUES_ENDPOINT, params)
 
-        response = self.get_url(self.LIST_LEAGUES_ENDPOINT, params)
+        response = self.get_url(endpoint_url)
         return [League(**league) for league in response.json()]
 
     def get_league_by_id(self, league_id: int) -> League:
@@ -187,10 +191,9 @@ class SWCClient:
             "league_id": league_id,
         }
 
- #       params = {key: val for key, val in params.items() if val is not None}
+        endpoint_url = self.build_url(self.LIST_TEAMS_ENDPOINT, params)
 
-
-        response = self.get_url(self.LIST_TEAMS_ENDPOINT, params)
+        response = self.get_url(endpoint_url)
         return [Team(**team) for team in response.json()]
 
     def list_players(
@@ -221,9 +224,9 @@ class SWCClient:
             "last_name": last_name,
         }
 
-#        params = {key: val for key, val in params.items() if val is not None}
+        endpoint_url = self.build_url(self.LIST_PLAYERS_ENDPOINT, params)
 
-        response = self.get_url(self.LIST_PLAYERS_ENDPOINT, params)
+        response = self.get_url(endpoint_url)
         return [Player(**player) for player in response.json()]
 
     def get_player_by_id(self, player_id: int):
@@ -267,9 +270,9 @@ class SWCClient:
             "minimum_last_changed_date": minimum_last_changed_date,
         }
 
-#        params = {key: val for key, val in params.items() if val is not None}
+        endpoint_url = self.build_url(self.LIST_PERFORMANCES_ENDPOINT, params)
 
-        response = self.get_url(self.LIST_PERFORMANCES_ENDPOINT, params)
+        response = self.get_url(endpoint_url)
         return [Performance(**peformance) for peformance in response.json()]
 
     # bulk endpoints -------------
