@@ -2,10 +2,7 @@
 import pytest
 from swcpy import SWCClient, SWCConfig
 
-#client = SWCClient(swc_base_url="http://0.0.0.0:8000")
-config = SWCConfig()
-client = SWCClient(config)
-
+client = SWCClient(swc_base_url="http://0.0.0.0:8000")
 
 #analytics endpoints
 def test_health_check():

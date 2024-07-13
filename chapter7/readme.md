@@ -1,1 +1,1 @@
-# Chapter 6 - Deploying Your API to the Cloud
+# Chapter 7 - Batteries Included: Creating a Python SDK

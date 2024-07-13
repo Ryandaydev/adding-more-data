@@ -1,4 +1,3 @@
-#this has some of the parquet changes
 import httpx
 import swcpy.swc_config as config
 import logging
@@ -29,12 +28,12 @@ class SWCClient:
     LIST_TEAMS_ENDPOINT = "/v0/teams/"
     GET_COUNTS_ENDPOINT = "/v0/counts/"
 
-    # BULK_FILE_BASE_URL = (
-    #     "https://raw.githubusercontent.com/[github ID]"
-    #     + "/portfolio-project/main/bulk/"
-    # )
+    BULK_FILE_BASE_URL = (
+        "https://raw.githubusercontent.com/[github ID]"
+        + "/portfolio-project/main/bulk/"
+    )
 
-    BULK_FILE_BASE_URL = ("https://raw.githubusercontent.com/Ryandaydev/adding-more-data/chapter7-work/bulk/")
+    #BULK_FILE_BASE_URL = ("https://raw.githubusercontent.com/Ryandaydev/adding-more-data/chapter7-work/bulk/")
 
     def __init__(self, input_config: config.SWCConfig):
         """Class constructor that sets varibles from configuration object."""
@@ -61,12 +60,12 @@ class SWCClient:
         }
 
         if self.backoff:
-            self.get_url = backoff.on_exception(
+            self.call_api = backoff.on_exception(
                 wait_gen=backoff.expo,
                 exception=(httpx.RequestError, httpx.HTTPStatusError),
                 max_time=self.backoff_max_time,
                 jitter=backoff.random_jitter,
-            )(self.get_url)
+            )(self.call_api)
 
         if self.bulk_file_format.lower() == "parquet":
             self.BULK_FILE_NAMES = {
@@ -79,7 +78,7 @@ class SWCClient:
 
         self.logger.debug(f"Bulk file dictionary: {self.BULK_FILE_NAMES}")
 
-    def get_url(self, 
+    def call_api(self, 
             api_endpoint: str,
             api_params: dict = None
         ) -> httpx.Response:
@@ -117,7 +116,7 @@ class SWCClient:
         """
         self.logger.debug("Entered health check")
         endpoint_url = self.HEALTH_CHECK_ENDPOINT
-        return self.get_url(endpoint_url)
+        return self.call_api(endpoint_url)
 
     def list_leagues(
         self,
@@ -145,9 +144,7 @@ class SWCClient:
             "league_name": league_name,
         }
 
-#        params = {key: val for key, val in params.items() if val is not None}
-
-        response = self.get_url(self.LIST_LEAGUES_ENDPOINT, params)
+        response = self.call_api(self.LIST_LEAGUES_ENDPOINT, params)
         return [League(**league) for league in response.json()]
 
     def get_league_by_id(self, league_id: int) -> League:
@@ -163,7 +160,7 @@ class SWCClient:
         # build URL
         endpoint_url = f"{self.LIST_LEAGUES_ENDPOINT}{league_id}"
         # make the API call
-        response = self.get_url(endpoint_url)
+        response = self.call_api(endpoint_url)
         responseLeague = League(**response.json())
         return responseLeague
 
@@ -199,7 +196,7 @@ class SWCClient:
  #       params = {key: val for key, val in params.items() if val is not None}
 
 
-        response = self.get_url(self.LIST_TEAMS_ENDPOINT, params)
+        response = self.call_api(self.LIST_TEAMS_ENDPOINT, params)
         return [Team(**team) for team in response.json()]
 
     def list_players(
@@ -232,7 +229,7 @@ class SWCClient:
 
 #        params = {key: val for key, val in params.items() if val is not None}
 
-        response = self.get_url(self.LIST_PLAYERS_ENDPOINT, params)
+        response = self.call_api(self.LIST_PLAYERS_ENDPOINT, params)
         return [Player(**player) for player in response.json()]
 
     def get_player_by_id(self, player_id: int):
@@ -251,7 +248,7 @@ class SWCClient:
         # build URL
         endpoint_url = f"{self.LIST_PLAYERS_ENDPOINT}{player_id}"
         # make the API call
-        response = self.get_url(endpoint_url)
+        response = self.call_api(endpoint_url)
         responsePlayer = Player(**response.json())
         return responsePlayer
 
@@ -278,7 +275,7 @@ class SWCClient:
 
 #        params = {key: val for key, val in params.items() if val is not None}
 
-        response = self.get_url(self.LIST_PERFORMANCES_ENDPOINT, params)
+        response = self.call_api(self.LIST_PERFORMANCES_ENDPOINT, params)
         return [Performance(**peformance) for peformance in response.json()]
 
     # bulk endpoints -------------
