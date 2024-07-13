@@ -34,12 +34,17 @@ class SWCClient:
     #     + "/portfolio-project/main/bulk/"
     # )
 
-    BULK_FILE_BASE_URL = ("https://github.com/Ryandaydev/adding-more-data/raw/main/bulk/")
+    BULK_FILE_BASE_URL = ("https://raw.githubusercontent.com/Ryandaydev/adding-more-data/chapter7-work/bulk/")
 
     def __init__(self, input_config: config.SWCConfig):
         """Class constructor that sets varibles from configuration object."""
 
+
+
         self.logger = logging.getLogger(__name__)
+        self.logger.debug(f"Bulk file base URL: {self.BULK_FILE_BASE_URL}")
+
+
         self.logger.debug(f"Input config: {input_config}")
 
         self.swc_base_url = input_config.swc_base_url
