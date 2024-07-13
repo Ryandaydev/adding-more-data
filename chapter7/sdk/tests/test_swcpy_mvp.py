@@ -1,10 +1,9 @@
 """Testing the sdk"""
 import pytest
-from swcpy import SWCClient, SWCConfig
+from swcpy.swc_client import SWCClient
 
 client = SWCClient(swc_base_url="http://0.0.0.0:8000")
 
-#analytics endpoints
 def test_health_check():
     """Tests health check from SDK"""
     response = client.get_health_check()
