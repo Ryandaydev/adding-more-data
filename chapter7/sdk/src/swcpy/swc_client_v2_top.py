@@ -1,11 +1,10 @@
 import httpx
-import swcpy.swc_config as config
-from .schemas import League, Team, Player, Performance
-from typing import List
-import backoff
-import logging
+import swcpy.swc_config as config <1>
+from .schemas import League, Team, Player, Performance <2>
+from typing import List <3>
+import backoff <4>
+import logging <5>
 logger = logging.getLogger(__name__)
-
 
 class SWCClient:
     """Interacts with the Sports World Central API.
@@ -21,7 +20,7 @@ class SWCClient:
 
     """
 
-    HEALTH_CHECK_ENDPOINT = "/"
+    HEALTH_CHECK_ENDPOINT = "/" <6>
     LIST_LEAGUES_ENDPOINT = "/v0/leagues/"
     LIST_PLAYERS_ENDPOINT = "/v0/players/"
     LIST_PERFORMANCES_ENDPOINT = "/v0/performances/"
@@ -35,10 +34,9 @@ class SWCClient:
 
     #BULK_FILE_BASE_URL = ("https://raw.githubusercontent.com/Ryandaydev/adding-more-data/chapter7-work/bulk/")
 
-    def __init__(self, input_config: config.SWCConfig):
+    def __init__(self, input_config: config.SWCConfig): <7>
         """Class constructor that sets varibles from configuration object."""
 
-        self.logger = logging.getLogger(__name__)
         self.logger.debug(f"Bulk file base URL: {self.BULK_FILE_BASE_URL}")
 
         self.logger.debug(f"Input config: {input_config}")
@@ -48,7 +46,7 @@ class SWCClient:
         self.backoff_max_time = input_config.swc_backoff_max_time
         self.bulk_file_format = input_config.swc_bulk_file_format
 
-        self.BULK_FILE_NAMES = {
+        self.BULK_FILE_NAMES = { <7>
             "players": "player_data",
             "leagues": "league_data",
             "performances": "performance_data",
@@ -56,7 +54,7 @@ class SWCClient:
             "team_players": "team_player_data",
         }
 
-        if self.backoff:
+        if self.backoff: <8>
             self.call_api = backoff.on_exception(
                 wait_gen=backoff.expo,
                 exception=(httpx.RequestError, httpx.HTTPStatusError),
@@ -64,7 +62,7 @@ class SWCClient:
                 jitter=backoff.random_jitter,
             )(self.call_api)
 
-        if self.bulk_file_format.lower() == "parquet":
+        if self.bulk_file_format.lower() == "parquet": <9>
             self.BULK_FILE_NAMES = {
                 key: value + ".parquet" for key, value in self.BULK_FILE_NAMES.items()
             }
